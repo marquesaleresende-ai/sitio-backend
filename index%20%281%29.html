@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sítio Florentino | Organizador de Acomodações</title>
+  <!-- Favicon com símbolo de aliança -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💍</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      background-color: #F8F4F5; 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      color: #2D3748;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+    
+    .font-script { 
+      font-family: 'Parisienne', cursive; 
+      letter-spacing: 0.02em;
+      font-weight: 700;
+    }
+    
+    .bg-casar-pink { background-color: #D4798F; }
+    .hover-casar-pink:hover { background-color: #BE657B; }
+    .text-casar-pink { color: #D4798F; }
+    .border-casar-pink { border-color: #D4798F; }
+    .bg-casar-light { background-color: #FAF4F5; }
+    
+    body.dark-mode {
+      background-color: #121212;
+      color: #E2E8F0;
+    }
+    body.dark-mode header, 
+    body.dark-mode .bg-white,
+    body.dark-mode footer {
+      background-color: #1E293B !important;
+      color: #E2E8F0 !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode .text-slate-900, 
+    body.dark-mode .text-slate-800,
+    body.dark-mode .text-slate-700 {
+      color: #F1F5F9 !important;
+    }
+    body.dark-mode .text-slate-400,
+    body.dark-mode .text-slate-500 {
+      color: #94A3B8 !important;
+    }
+    body.dark-mode .bg-slate-50,
+    body.dark-mode .bg-casar-light {
+      background-color: #0F172A !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode input, body.dark-mode select {
+      background-color: #0F172A !important;
+      color: #F1F5F9 !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode .room-dropzone {
+      background-color: #1E293B !important;
+      border-color: #334155 !important;
+    }
+
+    .guest-card { cursor: grab; user-select: none; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    .guest-card:active { cursor: grabbing; }
+    .guest-card:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -3px rgba(212, 121, 143, 0.15); }
+    
+    .room-card { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    .room-card:hover { transform: translateY(-2px); box-shadow: 0 14px 25px -5px rgba(212, 121, 143, 0.1); }
+
+    .room-dropzone { min-height: 95px; transition: all 0.25s ease; }
+    .room-dropzone.drag-over { background-color: #F5E6E8 !important; border-color: #D4798F !important; border-style: solid !important; }
+
+    @keyframes fugindoRefined {
+      0% { transform: translateX(0px); }
+      40% { transform: translateX(45px); }
+      65% { transform: translateX(45px); }
+      85% { transform: translateX(15px); }
+      100% { transform: translateX(0px); }
+    }
+    .container-perseguicao {
+      animation: fugindoRefined 7s infinite cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .container-perseguicao.paused {
+      animation-play-state: paused;
+    }
+
+    @media print {
+      body { background-color: #ffffff !important; color: #1A202C !important; }
+      header, #user-status-bar, #auth-screen, .flex.lg\:hidden, #guests-section, #add-guest-form, button, footer, .no-print, .mobile-room-add, #room-filters, #mapa-section, #guia-regras-section, #contador-section, #dashboard-estatisticas, #painel-historico, #btn-resumo-grupos, #periodo-abas-container, #extra-tools-section, #security-block-screen {
+        display: none !important;
+      }
+      
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+
+      /* MODO IMPRESSÃO INDIVIDUAL */
+      body.print-single-room #rooms-grid > div:not(.print-target) { display: none !important; }
+      body.print-single-room .print-target {
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: none !important;
+        margin: 0 !important;
+        border: 4px double #D4798F !important;
+        padding: 35px 45px !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #FFFFFF !important;
+        page-break-after: always;
+        box-sizing: border-box !important;
+      }
+      body.print-single-room .print-target .print-single-header { display: block !important; text-align: center !important; margin-bottom: 30px !important; }
+      body.print-single-room .print-target .print-default-header { display: none !important; }
+      body.print-single-room .print-target .room-dropzone {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+      }
+      body.print-single-room .print-target .room-dropzone > div {
+        border: 1px solid #E2E8F0 !important;
+        background: #FFFFFF !important;
+        padding: 16px 20px !important;
+        border-radius: 1.5rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+
+      /* MODO IMPRESSÃO EM LOTE */
+      body.print-all-mode #rooms-grid > div {
+        display: block !important;
+        position: relative !important;
+        width: 100% !important;
+        min-height: 90vh !important;
+        margin: 0 0 15mm 0 !important;
+        border: 4px double #D4798F !important;
+        padding: 35px 45px !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #FFFFFF !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        box-sizing: border-box !important;
+      }
+      body.print-all-mode #rooms-grid > div:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+      body.print-all-mode #rooms-grid > div .print-single-header { display: block !important; text-align: center !important; margin-bottom: 30px !important; }
+      body.print-all-mode #rooms-grid > div .print-default-header { display: none !important; }
+      body.print-all-mode #rooms-grid > div .room-dropzone {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+      }
+      body.print-all-mode #rooms-grid > div .room-dropzone > div {
+        border: 1px solid #E2E8F0 !important;
+        background: #FFFFFF !important;
+        padding: 16px 20px !important;
+        border-radius: 1.5rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+
+      #rooms-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      .bg-white { border: none !important; box-shadow: none !important; }
+    }
+    .print-single-header { display: none; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-rose-200 selection:text-rose-900" oncontextmenu="return false;">
+
+  <!-- TELA DE BLOQUEIO DE SEGURANÇA -->
+  <div id="security-block-screen" class="hidden fixed inset-0 bg-slate-950 z-[99999] flex items-center justify-center p-4 text-center">
+    <div class="bg-white p-8 md:p-10 rounded-3xl max-w-md shadow-2xl border-4 border-rose-500 space-y-4">
+      <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-900 font-serif">Acesso Negado</h2>
+      <p class="text-sm text-slate-600 font-medium">Você não tem permissão para abrir o código ou editar o código. (Tentativa de hackear ou burlar o site detectada).</p>
+      <div class="pt-2">
+        <button onclick="location.reload()" class="bg-casar-pink hover-casar-pink text-white px-6 py-3 rounded-2xl text-xs font-bold transition shadow-md w-full">Recarregar Sistema</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <!-- CABEÇALHO ELEGANTE -->
+    <header class="bg-white/85 backdrop-blur-md border-b border-rose-100/80 shadow-2xs py-3 px-6 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-30">
+      <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+        <div>
+          <span class="text-[10px] font-bold text-casar-pink tracking-[0.2em] uppercase">Sítio Florentino</span>
+          <h1 class="text-lg md:text-xl font-bold text-slate-800 font-serif flex items-center gap-2">
+            Alessandra & Marques <span class="text-xs font-sans font-normal text-slate-400">💍 Acomodações</span>
+          </h1>
+        </div>
+
+        <!-- ANIMAÇÃO INTERATIVA DO CASAL -->
+        <div class="hidden lg:flex items-center bg-gradient-to-r from-rose-50/90 to-pink-50/40 border border-rose-100 px-4 py-2 rounded-full text-xs shadow-2xs no-print h-11 relative w-[420px] justify-center flex-shrink-0" title="Clique para ver o que aconteceu!">
+          <div id="animacao-box" class="container-perseguicao gap-2 whitespace-nowrap px-2" onclick="clicarAnimacao()">
+            <span class="text-sm">🏃‍♂💨</span>
+            <span class="text-xs font-bold text-rose-700 tracking-wide">Pegue o noivo ele está fugindo!</span>
+            <span class="text-sm">👈👰‍♀</span>
+          </div>
+          <div id="balao-aviso" class="hidden absolute left-1/2 -translate-x-1/2 -bottom-9 bg-slate-900 text-white text-[11px] font-bold px-3.5 py-1.5 rounded-xl shadow-xl whitespace-nowrap z-50 animate-bounce">
+            ❌ Não deu certo, o noivo fugiu! 🏃‍♂️💨
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 flex-wrap justify-end">
+        <button onclick="desfazerUltimaAcao()" class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5" title="Desfazer última alteração">
+          <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">Desfazer</span>
+        </button>
+
+        <button id="btn-resumo-grupos" onclick="toggleResumoModal()" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5" title="Resumo por Grupos">
+          <i class="fa-solid fa-chart-bar text-casar-pink"></i> <span class="hidden sm:inline">Grupos</span>
+        </button>
+
+        <button onclick="toggleRefeicoesModal()" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5" title="Gestão de Refeições & Café da Manhã">
+          <i class="fa-solid fa-utensils text-casar-pink"></i> <span class="hidden sm:inline">Café & Buffet</span>
+        </button>
+
+        <button onclick="togglePerdidosModal()" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5" title="Achados e Perdidos">
+          <i class="fa-solid fa-suitcase text-casar-pink"></i> <span class="hidden sm:inline">Achados</span>
+        </button>
+
+        <button onclick="toggleHistoricoModal()" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5" title="Histórico de Alterações">
+          <i class="fa-solid fa-clock-rotate-left text-casar-pink"></i> <span class="hidden sm:inline">Histórico</span>
+        </button>
+
+        <button onclick="toggleDarkMode()" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400 p-2.5 rounded-xl text-xs font-bold transition shadow-xs" title="Alternar Modo Escuro">
+          <i id="darkModeIcon" class="fa-solid fa-moon"></i>
+        </button>
+
+        <div id="user-status-bar" class="hidden items-center gap-3 md:gap-4">
+          <div class="text-right">
+            <span id="logged-user-name" class="block text-xs font-bold text-slate-800"></span>
+            <span id="logged-user-role" class="block text-[10px] font-semibold text-rose-500 uppercase tracking-wider"></span>
+          </div>
+          <button id="admin-panel-btn" onclick="toggleAdminModal()" class="hidden bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold shadow-xs transition">
+            <i class="fa-solid fa-user-shield mr-1.5 text-amber-400"></i> <span class="hidden md:inline">Admin</span>
+          </button>
+          <button onclick="logout()" class="text-xs text-slate-400 hover:text-rose-600 font-semibold transition ml-1">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- TELA DE AUTENTICAÇÃO -->
+    <div id="auth-screen" class="flex-1 flex items-center justify-center p-4 my-8 md:my-16">
+      <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-rose-900/5 border border-rose-100/80 w-full max-w-md">
+        <div id="login-box">
+          <div class="text-center mb-8">
+            <div class="w-14 h-14 bg-casar-light rounded-2xl flex items-center justify-center mx-auto mb-4 text-casar-pink text-2xl shadow-inner">
+              <i class="fa-solid fa-ring"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 font-serif">Bem-vindos</h2>
+            <p class="text-xs text-slate-400 mt-1">Acesse para gerenciar ou visualizar as acomodações do casamento</p>
+          </div>
+
+          <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">E-mail</label>
+              <input type="email" id="login-email" required placeholder="seu@email.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:bg-white transition">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Senha</label>
+              <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:bg-white transition">
+            </div>
+            <button type="submit" class="w-full bg-casar-pink hover-casar-pink text-white py-3.5 rounded-2xl text-sm font-bold transition shadow-lg shadow-rose-500/20 mt-2">Entrar no Sistema</button>
+          </form>
+
+          <div class="mt-8 text-center border-t border-slate-100 pt-5">
+            <p class="text-xs text-slate-500">Não possui acesso? <button onclick="switchTab('register')" class="text-casar-pink font-bold hover:underline">Solicitar Acesso</button></p>
+          </div>
+        </div>
+
+        <div id="register-box" class="hidden">
+          <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 font-serif">Solicitar Acesso</h2>
+            <p class="text-xs text-slate-400 mt-1">Sua solicitação será analisada pela administração</p>
+          </div>
+
+          <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Seu Nome</label>
+              <input type="text" id="reg-name" required placeholder="Nome e Sobrenome" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:bg-white transition">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Seu E-mail</label>
+              <input type="email" id="reg-email" required placeholder="seu@email.com" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:bg-white transition">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Crie uma Senha</label>
+              <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 focus:bg-white transition">
+            </div>
+            <button type="submit" class="w-full bg-casar-pink hover-casar-pink text-white py-3.5 rounded-2xl text-sm font-bold transition shadow-lg shadow-rose-500/20 mt-2">Enviar Solicitação</button>
+          </form>
+
+          <div class="mt-8 text-center border-t border-slate-100 pt-5">
+            <p class="text-xs text-slate-500">Já tem uma conta? <button onclick="switchTab('login')" class="text-casar-pink font-bold hover:underline">Voltar ao Login</button></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO DO SÍTIO -->
+    <main id="app-screen" class="hidden max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 flex-1">
+      
+      <!-- ABAS DE SELEÇÃO DE PERÍODO -->
+      <div id="periodo-abas-container" class="bg-white p-2 rounded-3xl shadow-sm border border-rose-100/80 mb-6 flex flex-col md:flex-row items-center justify-between gap-3 no-print">
+        <div class="flex flex-wrap gap-2 w-full md:w-auto flex-1">
+          <button onclick="switchPeriodo('sexta-sabado')" id="tab-periodo-sexta-sabado" class="flex-1 min-w-[140px] py-3 px-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 bg-slate-100 text-slate-600">
+            <i class="fa-solid fa-calendar-day"></i> Sexta para Sábado
+          </button>
+          <button onclick="switchPeriodo('sabado-domingo')" id="tab-periodo-sabado-domingo" class="flex-1 min-w-[140px] py-3 px-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 bg-casar-pink text-white shadow-md">
+            <i class="fa-solid fa-calendar-check"></i> Sábado para Domingo (Festa)
+          </button>
+          <button onclick="switchPeriodo('domingo-segunda')" id="tab-periodo-domingo-segunda" class="flex-1 min-w-[140px] py-3 px-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 bg-slate-100 text-slate-600">
+            <i class="fa-solid fa-calendar-day"></i> Domingo para Segunda
+          </button>
+        </div>
+        <div class="flex items-center gap-2 w-full md:w-auto justify-end px-2">
+          <button onclick="copiarPeriodoAnterior()" class="text-xs bg-rose-50 hover:bg-rose-100 text-casar-pink border border-rose-200 px-3.5 py-3 rounded-2xl font-bold transition flex items-center gap-1.5" title="Copiar alocações de outro período">
+            <i class="fa-solid fa-clone"></i> Copiar de Outro Período
+          </button>
+        </div>
+      </div>
+
+      <!-- NAVEGAÇÃO MOBILE -->
+      <div class="flex lg:hidden bg-slate-200/70 p-1.5 rounded-2xl mb-6 gap-1">
+        <button id="tab-btn-guests" onclick="switchMobileView('guests')" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-white shadow-xs text-casar-pink transition">
+          <i class="fa-solid fa-users mr-1.5"></i> Convidados (<span id="mobile-unallocated-count">0</span>)
+        </button>
+        <button id="tab-btn-rooms" onclick="switchMobileView('rooms')" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 transition">
+          <i class="fa-solid fa-bed mr-1.5"></i> Quartos
+        </button>
+        <button id="tab-btn-map" onclick="switchMobileView('map')" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 transition">
+          <i class="fa-solid fa-map mr-1.5"></i> Mapa & Guia
+        </button>
+      </div>
+
+      <!-- DASHBOARD DE ESTATÍSTICAS -->
+      <div id="dashboard-estatisticas" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 no-print">
+        <div class="bg-white p-4 rounded-3xl border border-rose-100/80 shadow-2xs flex items-center gap-4">
+          <div class="w-12 h-12 bg-casar-light rounded-2xl flex items-center justify-center text-casar-pink text-lg font-bold">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Ocupação Geral</span>
+            <span id="stat-taxa-ocupacao" class="text-lg font-bold text-slate-900">0%</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-3xl border border-rose-100/80 shadow-2xs flex items-center gap-4">
+          <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 text-lg font-bold">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Check-ins Realizados</span>
+            <span id="stat-checkins" class="text-lg font-bold text-slate-900">0 / 0</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-3xl border border-rose-100/80 shadow-2xs flex items-center gap-4">
+          <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-casar-pink text-lg font-bold">
+            <i class="fa-solid fa-bed"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Vagas Livres</span>
+            <span id="stat-vagas-livres" class="text-lg font-bold text-slate-900">0</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-3xl border border-rose-100/80 shadow-2xs flex items-center gap-4">
+          <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 text-lg font-bold">
+            <i class="fa-solid fa-car"></i>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Caronas / Veículos</span>
+            <span id="stat-veiculos" class="text-lg font-bold text-slate-900">0 Cadastrados</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTAGEM REGRESSIVA -->
+      <div id="contador-section" class="bg-gradient-to-r from-casar-light via-white to-casar-light rounded-3xl shadow-sm border border-rose-100/80 p-6 mb-6 text-center no-print">
+        <span class="text-[10px] font-bold text-casar-pink tracking-[0.3em] uppercase block mb-1">Contagem Regressiva</span>
+        <h2 class="text-xl md:text-2xl font-bold text-slate-900 font-serif mb-4">O Grande Dia está chegando! 💍 (10/10 às 14:00)</h2>
+        
+        <div class="grid grid-cols-4 gap-2 md:gap-4 max-w-xl mx-auto">
+          <div class="bg-white/80 backdrop-blur-xs p-3 md:p-4 rounded-2xl border border-rose-100 shadow-2xs">
+            <span id="dias" class="text-xl md:text-3xl font-bold text-casar-pink block">00</span>
+            <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Dias</span>
+          </div>
+          <div class="bg-white/80 backdrop-blur-xs p-3 md:p-4 rounded-2xl border border-rose-100 shadow-2xs">
+            <span id="horas" class="text-xl md:text-3xl font-bold text-casar-pink block">00</span>
+            <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Horas</span>
+          </div>
+          <div class="bg-white/80 backdrop-blur-xs p-3 md:p-4 rounded-2xl border border-rose-100 shadow-2xs">
+            <span id="minutos" class="text-xl md:text-3xl font-bold text-casar-pink block">00</span>
+            <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Minutos</span>
+          </div>
+          <div class="bg-white/80 backdrop-blur-xs p-3 md:p-4 rounded-2xl border border-rose-100 shadow-2xs">
+            <span id="segundos" class="text-xl md:text-3xl font-bold text-casar-pink block">00</span>
+            <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Segundos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MINI MAPA INTERATIVO -->
+      <div id="mapa-section" class="bg-white rounded-3xl shadow-sm border border-rose-100/80 p-5 mb-6 no-print">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-base font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot text-casar-pink"></i> Mini Mapa Interativo do Sítio Florentino
+          </h2>
+          <span class="text-[11px] text-slate-400">Clique em um setor para filtrar</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div onclick="filtrarPorSetor('todos')" class="bg-casar-light p-3 rounded-2xl border border-rose-200/60 text-center cursor-pointer hover:border-casar-pink transition">
+            <i class="fa-solid fa-house-chimney text-casar-pink text-lg mb-1"></i>
+            <span class="block text-xs font-bold text-slate-800">Visão Geral</span>
+            <span class="text-[10px] text-slate-500">Todos os Quartos</span>
+          </div>
+          <div onclick="filtrarPorSetor('suites-principais')" class="bg-slate-50 p-3 rounded-2xl border border-slate-200/60 text-center cursor-pointer hover:border-casar-pink transition">
+            <i class="fa-solid fa-crown text-amber-500 text-lg mb-1"></i>
+            <span class="block text-xs font-bold text-slate-800">Suíte Capela</span>
+            <span class="text-[10px] text-slate-500">Quarto 11 (Noivos)</span>
+          </div>
+          <div onclick="filtrarPorSetor('bloco-principal-1')" class="bg-slate-50 p-3 rounded-2xl border border-slate-200/60 text-center cursor-pointer hover:border-casar-pink transition">
+            <i class="fa-solid fa-hotel text-casar-pink text-lg mb-1"></i>
+            <span class="block text-xs font-bold text-slate-800">Bloco Principal</span>
+            <span class="text-[10px] text-slate-500">Quartos 1 ao 5 (Térreo)</span>
+          </div>
+          <div onclick="filtrarPorSetor('bloco-principal-2')" class="bg-slate-50 p-3 rounded-2xl border border-slate-200/60 text-center cursor-pointer hover:border-casar-pink transition">
+            <i class="fa-solid fa-hotel text-casar-pink text-lg mb-1"></i>
+            <span class="block text-xs font-bold text-slate-800">Bloco Principal</span>
+            <span class="text-[10px] text-slate-500">Quartos 6 ao 10</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GUIA E REGRAS -->
+      <div id="guia-regras-section" class="bg-white rounded-3xl shadow-sm border border-rose-100/80 p-6 mb-6 no-print">
+        <h2 class="text-base font-bold text-slate-900 font-serif mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-casar-pink"></i> Guia, Orientações e Regras do Sítio Florentino
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="bg-casar-light/60 p-4 rounded-2xl border border-rose-100/80 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5 text-casar-pink">
+              <i class="fa-solid fa-clock"></i> Horários & Estadia
+            </div>
+            <ul class="space-y-1.5 text-slate-600">
+              <li>• <strong>Check-in:</strong> A partir das 08h da manhã antes da festa.</li>
+              <li>• <strong>Café da Manhã:</strong> Sábado às 08h, exclusivo para quem estiver hospedado.</li>
+              <li>• <strong>Check-out Domingo:</strong> Até as 21h para quem não for dormir de domingo para segunda.</li>
+              <li>• <strong>Pernoite Domingo/Segunda:</strong> Necessário pagar a diária extra.</li>
+            </ul>
+          </div>
+
+          <div class="bg-casar-light/60 p-4 rounded-2xl border border-rose-100/80 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5 text-casar-pink">
+              <i class="fa-solid fa-route"></i> Como Chegar (Atenção!)
+            </div>
+            <ul class="space-y-1.5 text-slate-600">
+              <li>• ⚠ <strong>Vindo de São Paulo:</strong> Use o <strong>Google Maps</strong> e NÃO o Waze.</li>
+              <li>• 📍 <strong>Referência:</strong> Subida próxima à rotatória ao lado do <strong>McDonald's de Mairiporã</strong>. Sítio Florentino!</li>
+            </ul>
+          </div>
+
+          <div class="bg-casar-light/60 p-4 rounded-2xl border border-rose-100/80 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5 text-casar-pink">
+              <i class="fa-solid fa-triangle-exclamation"></i> Normas e Cuidados
+            </div>
+            <ul class="space-y-1.5 text-slate-600">
+              <li>• 🔊 <strong>Som Alto:</strong> Mantenha o som em volume ambiente.</li>
+              <li>• 🐾 <strong>Pets:</strong> Proibida a entrada de animais.</li>
+              <li>• 🚬 <strong>Áreas de Fumar:</strong> Proibido fumar nos quartos. Utilize as áreas externas designadas.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        
+        <!-- CONVIDADOS -->
+        <section id="guests-section" class="lg:col-span-1 bg-white rounded-3xl shadow-sm border border-rose-100/80 p-4 md:p-5 flex flex-col lg:sticky lg:top-24">
+          <h2 class="text-base md:text-lg font-bold text-slate-900 font-serif mb-1 flex items-center justify-between">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-users text-casar-pink text-sm"></i> Convidados</span>
+          </h2>
+          
+          <div class="grid grid-cols-3 gap-1.5 mb-3 bg-casar-light p-2.5 rounded-2xl border border-rose-100/60 text-center mt-2">
+            <div>
+              <span class="block text-[8px] uppercase font-bold text-slate-400 tracking-wider">Alocados</span>
+              <span id="total-allocated" class="text-sm font-bold text-casar-pink">0</span>
+            </div>
+            <div class="border-x border-rose-200/60 px-1">
+              <span class="block text-[8px] uppercase font-bold text-slate-400 tracking-wider">Sem Quarto</span>
+              <span id="unallocated-count" class="text-sm font-bold text-slate-700">0</span>
+            </div>
+            <div>
+              <span class="block text-[8px] uppercase font-bold text-slate-400 tracking-wider">Livres</span>
+              <span id="total-vagas-livres" class="text-sm font-bold text-emerald-600">0</span>
+            </div>
+          </div>
+
+          <div class="mb-3 space-y-2">
+            <div class="flex gap-1.5">
+              <select id="group-filter" onchange="filterUnallocatedGuests()" class="flex-1 px-3 py-2 border border-rose-200/70 rounded-2xl text-xs bg-slate-50/50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                <option value="">Filtrar Grupo...</option>
+                <option value="Noivo e Noiva">💍 Noivo(a)</option>
+                <option value="Família da Noiva">F. Noiva</option>
+                <option value="Família do Noivo">F. Noivo</option>
+                <option value="Padrinhos">Padrinhos</option>
+                <option value="Amigos">Amigos</option>
+              </select>
+              <button onclick="limparFiltrosConvidados()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 rounded-2xl text-xs font-bold transition" title="Limpar Filtros">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+            </div>
+
+            <div class="flex gap-1.5">
+              <button onclick="toggleSpecialFilter('acessivel')" id="filter-tag-acessivel" class="flex-1 py-1 px-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-semibold text-slate-600 hover:border-casar-pink transition flex items-center justify-center gap-1 truncate">
+                <span>♿ Acessíveis</span>
+              </button>
+              <button onclick="toggleSpecialFilter('bebe')" id="filter-tag-bebe" class="flex-1 py-1 px-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-semibold text-slate-600 hover:border-casar-pink transition flex items-center justify-center gap-1 truncate">
+                <span>👶 Bebês</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="relative mb-2.5">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-xs">
+              <i class="fa-solid fa-search"></i>
+            </span>
+            <input type="text" id="guest-search" oninput="filterUnallocatedGuests()" placeholder="Pesquisar sem quarto..." class="w-full pl-9 pr-3 py-2 border border-rose-200/70 rounded-2xl text-xs bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:bg-white transition">
+          </div>
+
+          <form id="add-guest-form" class="space-y-2 mb-3 bg-rose-50/40 p-3 rounded-2xl border border-rose-100">
+            <div class="flex gap-1.5 items-center">
+              <input type="text" id="guest-name" placeholder="Adicionar novo..." required class="flex-1 min-w-0 px-2.5 py-1.5 border border-rose-200/80 rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-rose-300 transition">
+              <select id="guest-group-input" class="w-[90px] flex-shrink-0 text-[10px] border border-rose-200/80 rounded-xl px-1.5 py-1.5 bg-white text-slate-700 focus:outline-none">
+                <option value="Noivo e Noiva">💍 Noivo(a)</option>
+                <option value="Família da Noiva">F. Noiva</option>
+                <option value="Família do Noivo">F. Noivo</option>
+                <option value="Padrinhos">Padrinho</option>
+                <option value="Amigos">Amigos</option>
+              </select>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-slate-600 px-1 pt-0.5">
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="guest-acessivel" class="accent-rose-400"> ♿ Acessível</label>
+              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="guest-bebe" class="accent-rose-400"> 👶 Bebê</label>
+            </div>
+            <button type="submit" class="w-full bg-casar-pink hover-casar-pink text-white py-1.5 rounded-xl text-xs font-bold shadow-xs transition mt-1">Adicionar Convidado</button>
+          </form>
+
+          <div class="flex justify-between items-center px-1 mb-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+            <span>Lista de Espera</span>
+            <span id="contador-lista-filtrada">0 exibidos</span>
+          </div>
+
+          <div id="unallocated-list" class="max-h-[380px] overflow-y-auto space-y-2 pr-1"></div>
+        </section>
+
+        <!-- QUARTOS -->
+        <section id="rooms-section" class="hidden lg:block lg:col-span-3 space-y-5">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white px-6 py-4 rounded-3xl shadow-sm border border-rose-100/80 gap-4 no-print">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 font-serif">Distribuição das Acomodações</h2>
+              <span class="text-xs text-slate-400 font-medium">Capacidade total disponível: <strong id="total-capacity" class="text-casar-pink font-bold">0</strong> vagas</span>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+              <div id="room-filters" class="flex flex-wrap bg-slate-100/80 p-1 rounded-2xl text-xs font-semibold gap-1">
+                <button onclick="setRoomFilter('all')" id="filter-btn-all" class="px-3 py-2 rounded-xl bg-white shadow-xs text-casar-pink transition">Todos</button>
+                <button onclick="setRoomFilter('available')" id="filter-btn-available" class="px-3 py-2 rounded-xl text-slate-600 transition">Livres</button>
+                <button onclick="setRoomFilter('full')" id="filter-btn-full" class="px-3 py-2 rounded-xl text-slate-600 transition">Lotados</button>
+                <button onclick="setRoomFilter('pendentes')" id="filter-btn-pendentes" class="px-3 py-2 rounded-xl text-slate-600 transition" title="Quartos com check-ins pendentes">⏳ Pendentes</button>
+                <button onclick="setRoomFilter('acessivel')" id="filter-btn-acessivel" class="px-3 py-2 rounded-xl text-slate-600 transition" title="Quartos com Acessibilidade / Térreo">♿ Térreo</button>
+                <button onclick="setRoomFilter('bebe')" id="filter-btn-bebe" class="px-3 py-2 rounded-xl text-slate-600 transition" title="Quartos com Bebês">👶 Bebês</button>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="exportarExcelCSV()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-2.5 rounded-2xl font-bold transition flex items-center gap-1.5" title="Baixar Planilha CSV">
+                  <i class="fa-solid fa-file-excel"></i> Exportar CSV
+                </button>
+                <button onclick="printAllRoomsIndividual()" class="text-xs bg-slate-100/80 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-2xl font-bold transition flex items-center gap-1.5" title="Imprimir todos os quartos individualmente (um por folha)">
+                  <i class="fa-solid fa-print"></i> Imprimir Todos (Individual)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="rooms-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- MODAL DE SELEÇÃO E CRIAÇÃO RÁPIDA -->
+    <div id="select-guest-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-3 border-b border-slate-100 pb-3">
+          <h3 class="text-base font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-user-plus text-casar-pink"></i> Adicionar Convidados ao Quarto
+          </h3>
+          <button onclick="fecharModalSelecaoQuarto()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <input type="hidden" id="modal-target-room-id">
+
+        <!-- ABA / OPÇÃO DE CRIAR NOVO CONVIDADO DIRETO AQUI -->
+        <div class="bg-rose-50/60 p-3 rounded-2xl border border-rose-100 mb-3 space-y-2">
+          <span class="text-[11px] font-bold text-casar-pink uppercase tracking-wider block">✨ Não está na lista? Crie direto aqui:</span>
+          <div class="flex gap-1.5">
+            <input type="text" id="modal-new-name" placeholder="Nome do novo convidado..." class="flex-1 min-w-0 px-2.5 py-1.5 border border-rose-200 rounded-xl text-xs bg-white focus:outline-none">
+            <select id="modal-new-group" class="w-[95px] text-[10px] border border-rose-200 rounded-xl px-1.5 py-1.5 bg-white text-slate-700">
+              <option value="Noivo e Noiva">💍 Noivo(a)</option>
+              <option value="Família da Noiva">F. Noiva</option>
+              <option value="Família do Noivo">F. Noivo</option>
+              <option value="Padrinhos">Padrinho</option>
+              <option value="Amigos">Amigos</option>
+            </select>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-slate-600 px-1">
+            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="modal-new-acessivel" class="accent-rose-400"> ♿ Acessível</label>
+            <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="modal-new-bebe" class="accent-rose-400"> 👶 Bebê</label>
+            <button type="button" onclick="criarEAdicionarNaModal()" class="bg-casar-pink hover-casar-pink text-white px-3 py-1 rounded-lg font-bold text-[10px] transition shadow-2xs">Criar e Adicionar</button>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-500 mb-2">Ou marque os convidados existentes na lista abaixo:</p>
+        
+        <div class="relative mb-2">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-xs">
+            <i class="fa-solid fa-search"></i>
+          </span>
+          <input type="text" id="modal-guest-search" oninput="renderModalGuestList()" placeholder="Filtrar convidados..." class="w-full pl-9 pr-3 py-2 border border-rose-200/70 rounded-xl text-xs bg-slate-50 focus:outline-none focus:ring-2 focus:ring-rose-300">
+        </div>
+
+        <div id="modal-unallocated-list" class="space-y-2 overflow-y-auto pr-1 flex-1 max-h-[200px]"></div>
+
+        <div class="pt-3 border-t border-slate-100 mt-3 flex gap-2">
+          <button type="button" onclick="fecharModalSelecaoQuarto()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-2.5 rounded-xl text-xs font-bold transition">Cancelar</button>
+          <button type="button" onclick="confirmarAdicaoMultipla()" class="flex-1 bg-casar-pink hover-casar-pink text-white py-2.5 rounded-xl text-xs font-bold transition shadow-md">Adicionar Selecionados</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO -->
+    <div id="edit-guest-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl border border-slate-100">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-casar-pink"></i> Editar Convidado
+          </h3>
+          <button onclick="fecharModalEdicao()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form id="edit-guest-form" onsubmit="salvarEdicaoConvidado(event)" class="space-y-4">
+          <input type="hidden" id="edit-original-name">
+          <input type="hidden" id="edit-from-room">
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nome do Convidado</label>
+            <input type="text" id="edit-guest-name-input" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs focus:outline-none focus:ring-2 focus:ring-rose-300">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Grupo / Categoria</label>
+            <select id="edit-guest-group-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-300">
+              <option value="Noivo e Noiva">💍 Noivo(a)</option>
+              <option value="Família da Noiva">Família da Noiva</option>
+              <option value="Família do Noivo">Família do Noivo</option>
+              <option value="Padrinhos">Padrinhos</option>
+              <option value="Amigos">Amigos</option>
+            </select>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-700 px-1 pt-1">
+            <label class="flex items-center gap-2 cursor-pointer font-medium"><input type="checkbox" id="edit-guest-acessivel" class="accent-rose-400 scale-110"> ♿ Acessível</label>
+            <label class="flex items-center gap-2 cursor-pointer font-medium"><input type="checkbox" id="edit-guest-bebe" class="accent-rose-400 scale-110"> 👶 Bebê / Criança</label>
+          </div>
+
+          <div class="pt-2 flex gap-2">
+            <button type="button" onclick="fecharModalEdicao()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-2xl text-xs font-bold transition">Cancelar</button>
+            <button type="submit" class="flex-1 bg-casar-pink hover-casar-pink text-white py-3 rounded-2xl text-xs font-bold transition shadow-md">Salvar Alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL RESUMO -->
+    <div id="resumo-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-chart-bar text-casar-pink"></i> Resumo de Convidados por Grupo
+          </h3>
+          <button onclick="toggleResumoModal()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Distribuição atual dos convidados nos quartos por categoria:</p>
+        <div id="resumo-grupos-lista" class="space-y-3 overflow-y-auto pr-1 flex-1 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- MODAL GESTÃO DE REFEIÇÕES & CÁLCULO DE CAFÉ -->
+    <div id="refeicoes-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-xl shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-utensils text-casar-pink"></i> Calculadora de Café da Manhã & Compras
+          </h3>
+          <button onclick="toggleRefeicoesModal()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Cálculo estatístico realista baseado no perfil dos hóspedes alocados neste período (Homens, Mulheres e Crianças):</p>
+        <div id="refeicoes-conteudo" class="space-y-3 overflow-y-auto pr-1 flex-1 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- MODAL ACHADOS E PERDIDOS -->
+    <div id="perdidos-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-xl shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-suitcase text-casar-pink"></i> Achados e Perdidos (Pós-Festa)
+          </h3>
+          <button onclick="togglePerdidosModal()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        
+        <form onsubmit="adicionarItemPerdido(event)" class="space-y-3 mb-4 bg-casar-light p-3 rounded-2xl border border-rose-100">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" id="perdido-item" required placeholder="Descrição do item (ex: Carregador iPhone)" class="px-3 py-2 border border-rose-200 rounded-xl text-xs bg-white focus:outline-none">
+            <input type="text" id="perdido-local" required placeholder="Onde foi achado (ex: Quarto 3)" class="px-3 py-2 border border-rose-200 rounded-xl text-xs bg-white focus:outline-none">
+          </div>
+          <button type="submit" class="w-full bg-casar-pink hover-casar-pink text-white py-2 rounded-xl text-xs font-bold transition shadow-xs">Cadastrar Item Encontrado</button>
+        </form>
+
+        <div id="perdidos-lista" class="space-y-2.5 overflow-y-auto pr-1 flex-1 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- MODAL HISTÓRICO -->
+    <div id="historico-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-casar-pink"></i> Histórico de Movimentações
+          </h3>
+          <button onclick="toggleHistoricoModal()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Registro das últimas ações realizadas no sistema:</p>
+        <div id="historico-lista" class="space-y-2.5 overflow-y-auto pr-1 flex-1 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- MODAL ADMIN -->
+    <div id="admin-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-lg shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+          <h3 class="text-lg font-bold text-slate-900 font-serif flex items-center gap-2">
+            <i class="fa-solid fa-user-shield text-amber-500"></i> Painel Administrativo
+          </h3>
+          <button onclick="toggleAdminModal()" class="text-slate-400 hover:text-slate-700 transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Gerencie as permissões de acesso dos convidados ao sistema:</p>
+        <div id="users-approval-list" class="space-y-3 overflow-y-auto pr-1 flex-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RODAPÉ -->
+  <footer class="bg-white border-t border-rose-100/80 py-5 text-center mt-12">
+    <p class="text-xs text-slate-500 font-medium">
+      Desenvolvido com sofisticação por <strong class="text-casar-pink font-semibold">Marques Alessandro</strong> &copy; 2026 — Sítio Florentino
+    </p>
+  </footer>
+
+  <!-- SCRIPT FIREBASE E LÓGICA -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+    document.addEventListener('keydown', (e) => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+        (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+      ) {
+        e.preventDefault();
+        exibirTelaBloqueio();
+        return false;
+      }
+    });
+
+    setInterval(() => {
+      const threshold = 160;
+      if (
+        window.outerWidth - window.innerWidth > threshold ||
+        window.outerHeight - window.innerHeight > threshold
+      ) {
+        exibirTelaBloqueio();
+      }
+    }, 1000);
+
+    function exibirTelaBloqueio() {
+      const tela = document.getElementById("security-block-screen");
+      if (tela) tela.classList.remove("hidden");
+    }
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDKNdFvWdx3Olj5087FTLj3F9wpcc9CuA",
+      authDomain: "quartoscasorio.firebaseapp.com",
+      projectId: "quartoscasorio",
+      storageBucket: "quartoscasorio.firebasestorage.app",
+      messagingSenderId: "1089880573484",
+      appId: "1:1089880573484:web:c975b0bb72dec968b9f389",
+      measurementId: "G-B0QVW4G35R"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const ADMIN_EMAIL = "marques_china@hotmail.com";
+
+    const defaultRooms = [
+      { id: 1, name: "Quarto 1", beds: "2 Camas de Casal + 1 Beliche", baseCap: 6, extraColchao: false, criancaGratis: false, maxCap: 6, veiculos: [], guests: [
+        { name: "Kalebe", group: "Padrinhos", acessivel: false, bebe: false, checkedIn: false },
+        { name: "Daiane", group: "Padrinhos", acessivel: false, bebe: false, checkedIn: false },
+        { name: "Douglas", group: "Amigos", acessivel: false, bebe: false, checkedIn: false },
+        { name: "Cachacíntia", group: "Amigos", acessivel: false, bebe: false, checkedIn: false },
+        { name: "Ana", group: "Família da Noiva", acessivel: false, bebe: false, checkedIn: false },
+        { name: "Alexandre", group: "Família da Noiva", acessivel: false, bebe: false, checkedIn: false }
+      ] },
+      { id: 2, name: "Quarto 2", beds: "1 Cama Casal + 1 Beliche + 1 Box Solteiro", baseCap: 5, extraColchao: false, criancaGratis: false, maxCap: 5, veiculos: [], guests: [] },
+      { id: 3, name: "Quarto 3", beds: "1 Cama Casal + 1 Beliche + 1 Box Solteiro", baseCap: 5, extraColchao: false, criancaGratis: false, maxCap: 5, veiculos: [], guests: [] },
+      { id: 4, name: "Quarto 4", beds: "1 Cama Casal + 1 Beliche", baseCap: 4, extraColchao: false, criancaGratis: false, maxCap: 4, veiculos: [], guests: [] },
+      { id: 5, name: "Quarto 5", beds: "1 Cama Casal + 1 Beliche + 1 Box Solteiro", baseCap: 5, extraColchao: false, criancaGratis: false, maxCap: 5, veiculos: [], guests: [] },
+      { id: 6, name: "Quarto 6", beds: "1 Cama Casal + 1 Beliche", baseCap: 4, extraColchao: false, criancaGratis: false, maxCap: 4, veiculos: [], guests: [] },
+      { id: 7, name: "Quarto 7", beds: "1 Cama Casal + 1 Beliche + 1 Box Solteiro", baseCap: 5, extraColchao: false, criancaGratis: false, maxCap: 5, veiculos: [], guests: [] },
+      { id: 8, name: "Quarto 8", beds: "1 Cama Casal + 1 Beliche + 1 Box Solteiro", baseCap: 5, extraColchao: false, criancaGratis: false, maxCap: 5, veiculos: [], guests: [] },
+      { id: 9, name: "Quarto 9", beds: "1 Cama Casal + 1 Beliche + 1 Box Solteiro", baseCap: 5, extraColchao: false, criancaGratis: false, maxCap: 5, veiculos: [], guests: [] },
+      { id: 10, name: "Quarto 10", beds: "2 Camas de Casal + 1 Beliche", baseCap: 6, extraColchao: false, criancaGratis: false, maxCap: 6, veiculos: [], guests: [] },
+      { id: 11, name: "Quarto 11 (Suíte Capela - Noivos)", beds: "1 Cama de Casal", baseCap: 2, extraColchao: false, criancaGratis: false, maxCap: 2, veiculos: [], guests: [
+        { name: "Marques", group: "Noivo e Noiva", acessivel: false, bebe: false, checkedIn: false },
+        { name: "Alessandra", group: "Noivo e Noiva", acessivel: false, bebe: false, checkedIn: false }
+      ] }
+    ];
+
+    const defaultUnallocated = [
+      { name: "Pedro", group: "Família do Noivo", acessivel: false, bebe: false },
+      { name: "Dani", group: "Família da Noiva", acessivel: false, bebe: true },
+      { name: "Thiago", group: "Padrinhos", acessivel: true, bebe: false },
+      { name: "Edileusa", group: "Família do Noivo", acessivel: true, bebe: false }
+    ];
+
+    let users = [{ email: ADMIN_EMAIL, name: "Marques (Admin)", password: "123", status: "APPROVED_EDIT", isAdmin: true }];
+    
+    let globalUnallocatedGuests = JSON.parse(JSON.stringify(defaultUnallocated));
+
+    let periodosData = {
+      "sexta-sabado": { rooms: JSON.parse(JSON.stringify(defaultRooms)) },
+      "sabado-domingo": { rooms: JSON.parse(JSON.stringify(defaultRooms)) },
+      "domingo-segunda": { rooms: JSON.parse(JSON.stringify(defaultRooms)) }
+    };
+    let periodoAtual = "sabado-domingo";
+
+    let rooms = periodosData[periodoAtual].rooms;
+    let unallocatedGuests = globalUnallocatedGuests;
+
+    let ultimoEstadoBackup = null;
+    let isInitialLoadDone = false;
+
+    function salvarBackupEstado() {
+      ultimoEstadoBackup = JSON.parse(JSON.stringify({
+        periodo: periodoAtual,
+        rooms: rooms,
+        unallocatedGuests: globalUnallocatedGuests
+      }));
+    }
+
+    window.desfazerUltimaAcao = function() {
+      if (!ultimoEstadoBackup) {
+        alert("Nenhuma alteração recente para desfazer.");
+        return;
+      }
+      if (confirm(`Deseja desfazer a última ação e restaurar o estado anterior?`)) {
+        periodoAtual = ultimoEstadoBackup.periodo;
+        rooms = JSON.parse(JSON.stringify(ultimoEstadoBackup.rooms));
+        globalUnallocatedGuests = JSON.parse(JSON.stringify(ultimoEstadoBackup.unallocatedGuests));
+        unallocatedGuests = globalUnallocatedGuests;
+        periodosData[periodoAtual].rooms = rooms;
+        ultimoEstadoBackup = null;
+        registrarAcao(`Desfez a última alteração com sucesso`);
+        syncToFirebase();
+        alert("Estado anterior restaurado com sucesso!");
+      }
+    }
+
+    let historico = [];
+    let itensPerdidos = [];
+    let currentUser = null;
+    let currentRoomFilter = 'all';
+    let setorFiltroAtual = 'todos';
+    let specialFilterActive = null;
+
+    function registrarAcao(descricao) {
+      const dataHora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const autor = currentUser ? currentUser.name : "Sistema";
+      historico.unshift({ texto: `[${periodoAtual.toUpperCase()}] ${descricao} (${autor} às ${dataHora})` });
+      if (historico.length > 25) historico.pop();
+    }
+
+    function iniciarContagemRegressiva() {
+      const dataAlvo = new Date("2026-10-10T14:00:00").getTime();
+      setInterval(() => {
+        const agora = new Date().getTime();
+        const diferenca = dataAlvo - agora;
+        if (diferenca > 0) {
+          const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+          const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+          const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+
+          const elDias = document.getElementById("dias");
+          const elHoras = document.getElementById("horas");
+          const elMinutos = document.getElementById("minutos");
+          const elSegundos = document.getElementById("segundos");
+
+          if (elDias) elDias.innerText = String(dias).padStart(2, '0');
+          if (elHoras) elHoras.innerText = String(horas).padStart(2, '0');
+          if (elMinutos) elMinutos.innerText = String(minutos).padStart(2, '0');
+          if (elSegundos) elSegundos.innerText = String(segundos).padStart(2, '0');
+        }
+      }, 1000);
+    }
+    iniciarContagemRegressiva();
+
+    // CONEXÃO APONTA EXATAMENTE PARA O DOCUMENTO "dados_v2" NO FIRESTORE
+    const dadosRef = doc(db, "casamento", "dados_v2");
+    let firebaseReadyResolve;
+    let firebaseReadyReject;
+    const firebaseReady = new Promise((resolve, reject) => {
+      firebaseReadyResolve = resolve;
+      firebaseReadyReject = reject;
+    });
+    let firebaseReadyDone = false;
+    let saveQueue = Promise.resolve();
+    let saveRequestedBeforeReady = false;
+
+    function garantirAdministrador() {
+      const adminExistente = users.find(u => String(u.email || "").toLowerCase() === ADMIN_EMAIL.toLowerCase());
+      if (!adminExistente) {
+        users.unshift({
+          email: ADMIN_EMAIL,
+          name: "Marques (Admin)",
+          password: "123",
+          status: "APPROVED_EDIT",
+          isAdmin: true
+        });
+      } else {
+        adminExistente.isAdmin = true;
+        if (!adminExistente.status || adminExistente.status === "PENDING" || adminExistente.status === "BLOCKED") {
+          adminExistente.status = "APPROVED_EDIT";
+        }
+      }
+    }
+
+    function normalizarDadosCarregados(data) {
+      if (!data || typeof data !== "object") return;
+
+      if (Array.isArray(data.users) && data.users.length > 0) users = data.users;
+      if (Array.isArray(data.historico)) historico = data.historico;
+      if (Array.isArray(data.itensPerdidos)) itensPerdidos = data.itensPerdidos;
+
+      if (Array.isArray(data.globalUnallocatedGuests)) {
+        globalUnallocatedGuests = data.globalUnallocatedGuests;
+      } else if (Array.isArray(data.unallocatedGuests)) {
+        globalUnallocatedGuests = data.unallocatedGuests;
+      }
+      unallocatedGuests = globalUnallocatedGuests;
+
+      if (data.periodosData && typeof data.periodosData === "object") {
+        Object.keys(data.periodosData).forEach(pKey => {
+          if (data.periodosData[pKey] && Array.isArray(data.periodosData[pKey].rooms)) {
+            periodosData[pKey] = data.periodosData[pKey];
+          }
+        });
+      } else if (Array.isArray(data.rooms)) {
+        // Compatibilidade com a estrutura antiga: "rooms" representava sábado-domingo.
+        periodosData["sabado-domingo"].rooms = data.rooms;
+      }
+
+      ["sexta-sabado", "sabado-domingo", "domingo-segunda"].forEach(pKey => {
+        if (!periodosData[pKey] || !Array.isArray(periodosData[pKey].rooms)) {
+          periodosData[pKey] = { rooms: JSON.parse(JSON.stringify(defaultRooms)) };
+        }
+      });
+
+      garantirAdministrador();
+      rooms = periodosData[periodoAtual].rooms;
+      isInitialLoadDone = true;
+    }
+
+    function normalizarRooms() {
+      rooms = (Array.isArray(rooms) ? rooms : []).map(r => {
+        const normalizedGuests = Array.isArray(r.guests) ? r.guests.map(g => {
+          if (typeof g === "string") {
+            return { name: g, group: "Geral", acessivel: false, bebe: false, checkedIn: false };
+          }
+          return {
+            ...g,
+            checkedIn: g.checkedIn !== undefined ? Boolean(g.checkedIn) : false,
+            acessivel: g.acessivel !== undefined ? Boolean(g.acessivel) : false,
+            bebe: g.bebe !== undefined ? Boolean(g.bebe) : false
+          };
+        }) : [];
+
+        const veiculosList = Array.isArray(r.veiculos) ? [...r.veiculos] : [];
+        if (r.veiculo && typeof r.veiculo === "string" && r.veiculo.trim() !== "" && veiculosList.length === 0) {
+          veiculosList.push(r.veiculo.trim());
+        }
+
+        return {
+          ...r,
+          guests: normalizedGuests,
+          extraColchao: r.extraColchao !== undefined ? Boolean(r.extraColchao) : false,
+          criancaGratis: r.criancaGratis !== undefined ? Boolean(r.criancaGratis) : false,
+          veiculos: veiculosList
+        };
+      });
+      periodosData[periodoAtual].rooms = rooms;
+    }
+
+    onSnapshot(dadosRef, (docSnap) => {
+      try {
+        // Não reaplica o snapshot local pendente por cima de uma alteração que ainda está sendo salva.
+        if (docSnap.metadata && docSnap.metadata.hasPendingWrites) return;
+
+        if (docSnap.exists()) {
+          normalizarDadosCarregados(docSnap.data());
+          normalizarRooms();
+        } else {
+          // Documento inexistente: cria a estrutura inicial sem apagar nada, caso outro cliente o crie primeiro.
+          garantirAdministrador();
+          normalizarRooms();
+          saveRequestedBeforeReady = true;
+        }
+
+        if (!firebaseReadyDone) {
+          firebaseReadyDone = true;
+          firebaseReadyResolve();
+        }
+
+        renderAll();
+        if (currentUser && currentUser.isAdmin) renderApprovalList();
+
+        if (saveRequestedBeforeReady) {
+          saveRequestedBeforeReady = false;
+          syncToFirebase();
+        }
+      } catch (error) {
+        console.error("Erro ao processar dados do Firebase:", error);
+        if (!firebaseReadyDone) {
+          firebaseReadyDone = true;
+          firebaseReadyReject(error);
+        }
+      }
+    }, (error) => {
+      console.error("Erro ao escutar dados do Firebase:", error);
+      if (!firebaseReadyDone) {
+        firebaseReadyDone = true;
+        firebaseReadyReject(error);
+      }
+      alert("Não foi possível conectar ao banco de dados do Firebase. Verifique as regras do Firestore e a configuração do projeto.");
+    });
+
+    async function syncToFirebase() {
+      if (!firebaseReadyDone) {
+        saveRequestedBeforeReady = true;
+        return firebaseReady.catch(() => {});
+      }
+
+      // Serializa gravações para evitar duas alterações locais disputando a mesma gravação.
+      saveQueue = saveQueue.then(async () => {
+        periodosData[periodoAtual].rooms = rooms;
+        garantirAdministrador();
+
+        const payload = {
+          users,
+          periodosData,
+          rooms,
+          globalUnallocatedGuests,
+          // Mantém compatibilidade com a estrutura antiga.
+          unallocatedGuests: globalUnallocatedGuests,
+          historico,
+          itensPerdidos
+        };
+
+        await setDoc(dadosRef, payload, { merge: true });
+      }).catch(err => {
+        console.error("Erro ao sincronizar com o Firebase:", err);
+        alert("Erro ao salvar alterações na nuvem. Verifique sua conexão e as regras do Firestore.");
+      });
+
+      return saveQueue;
+    }
+
+    window.switchPeriodo = function(periodo) {
+      periodosData[periodoAtual].rooms = rooms;
+
+      periodoAtual = periodo;
+      ['sexta-sabado', 'sabado-domingo', 'domingo-segunda'].forEach(p => {
+        const btn = document.getElementById(`tab-periodo-${p}`);
+        if(btn) {
+          if(p === periodo) {
+            btn.className = "flex-1 min-w-[140px] py-3 px-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 bg-casar-pink text-white shadow-md";
+          } else {
+            btn.className = "flex-1 min-w-[140px] py-3 px-4 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200";
+          }
+        }
+      });
+
+      if (!periodosData[periodo] || !periodosData[periodo].rooms) {
+        periodosData[periodo] = { rooms: JSON.parse(JSON.stringify(defaultRooms)) };
+      }
+      rooms = periodosData[periodo].rooms;
+      renderAll();
+    }
+
+    window.copiarPeriodoAnterior = function() {
+      const escolha = prompt(`Deseja copiar a distribuição de quartos de qual período para (${periodoAtual.toUpperCase()})?\nDigite:\n1 para 'sexta-sabado'\n2 para 'sabado-domingo'\n3 para 'domingo-segunda'`);
+      let chaveOrigem = "";
+      if (escolha === "1") chaveOrigem = "sexta-sabado";
+      if (escolha === "2") chaveOrigem = "sabado-domingo";
+      if (escolha === "3") chaveOrigem = "domingo-segunda";
+
+      if (chaveOrigem && periodosData[chaveOrigem]) {
+        if (confirm(`Isso vai substituir os quartos atuais pelas alocações de (${chaveOrigem.toUpperCase()}). Continuar?`)) {
+          salvarBackupEstado();
+          periodosData[periodoAtual].rooms = JSON.parse(JSON.stringify(periodosData[chaveOrigem].rooms));
+          rooms = periodosData[periodoAtual].rooms;
+          registrarAcao(`Copiou alocações de quartos do período ${chaveOrigem}`);
+          syncToFirebase();
+          alert("Alocações copiadas com sucesso!");
+        }
+      }
+    }
+
+    window.toggleDarkMode = function() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById("darkModeIcon").className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+      localStorage.setItem("casamento_dark_mode", isDark);
+    }
+
+    if (localStorage.getItem("casamento_dark_mode") === "true") {
+      document.body.classList.add('dark-mode');
+      document.getElementById("darkModeIcon").className = "fa-solid fa-sun";
+    }
+
+    window.filtrarPorSetor = function(setor) {
+      setorFiltroAtual = setor;
+      renderRooms();
+      document.getElementById("rooms-section").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    window.toggleSpecialFilter = function(type) {
+      if (specialFilterActive === type) {
+        specialFilterActive = null;
+        document.getElementById(`filter-tag-${type}`).classList.remove("bg-casar-light", "border-casar-pink", "text-casar-pink");
+      } else {
+        if (specialFilterActive) {
+          document.getElementById(`filter-tag-${specialFilterActive}`).classList.remove("bg-casar-light", "border-casar-pink", "text-casar-pink");
+        }
+        specialFilterActive = type;
+        document.getElementById(`filter-tag-${type}`).classList.add("bg-casar-light", "border-casar-pink", "text-casar-pink");
+      }
+      renderUnallocated();
+    }
+
+    window.limparFiltrosConvidados = function() {
+      document.getElementById("guest-search").value = "";
+      document.getElementById("group-filter").value = "";
+      if (specialFilterActive) {
+        document.getElementById(`filter-tag-${specialFilterActive}`).classList.remove("bg-casar-light", "border-casar-pink", "text-casar-pink");
+        specialFilterActive = null;
+      }
+      renderUnallocated();
+    }
+
+    window.abrirModalEdicao = function(name, group, acessivel, bebe, fromRoom) {
+      document.getElementById("edit-original-name").value = name;
+      document.getElementById("edit-guest-name-input").value = name;
+      document.getElementById("edit-guest-group-input").value = group;
+      document.getElementById("edit-guest-acessivel").checked = acessivel;
+      document.getElementById("edit-guest-bebe").checked = bebe;
+      document.getElementById("edit-from-room").value = fromRoom !== null && fromRoom !== undefined ? fromRoom : "";
+      
+      document.getElementById("edit-guest-modal").classList.remove("hidden");
+    }
+
+    window.fecharModalEdicao = function() {
+      document.getElementById("edit-guest-modal").classList.add("hidden");
+    }
+
+    window.salvarEdicaoConvidado = function(e) {
+      e.preventDefault();
+      const originalName = document.getElementById("edit-original-name").value;
+      const newName = document.getElementById("edit-guest-name-input").value.trim();
+      const newGroup = document.getElementById("edit-guest-group-input").value;
+      const newAcessivel = document.getElementById("edit-guest-acessivel").checked;
+      const newBebe = document.getElementById("edit-guest-bebe").checked;
+      const fromRoomStr = document.getElementById("edit-from-room").value;
+
+      if (!newName) return alert("O nome não pode estar vazio.");
+
+      salvarBackupEstado();
+
+      if (fromRoomStr === "") {
+        const guest = globalUnallocatedGuests.find(g => g.name === originalName);
+        if (guest) {
+          guest.name = newName;
+          guest.group = newGroup;
+          guest.acessivel = newAcessivel;
+          guest.bebe = newBebe;
+        }
+      } else {
+        const roomId = parseInt(fromRoomStr);
+        const room = rooms.find(r => r.id === roomId);
+        if (room) {
+          const guest = room.guests.find(g => g.name === originalName);
+          if (guest) {
+            guest.name = newName;
+            guest.group = newGroup;
+            guest.acessivel = newAcessivel;
+            guest.bebe = newBebe;
+          }
+        }
+      }
+
+      registrarAcao(`Editou o convidado ${originalName} (Grupo: ${newGroup})`);
+      syncToFirebase();
+      fecharModalEdicao();
+      renderAll();
+    }
+
+    window.toggleHistoricoModal = function() {
+      const modal = document.getElementById("historico-modal");
+      modal.classList.toggle("hidden");
+      if (!modal.classList.contains("hidden")) renderHistoricoList();
+    }
+
+    window.toggleResumoModal = function() {
+      const modal = document.getElementById("resumo-modal");
+      modal.classList.toggle("hidden");
+      if (!modal.classList.contains("hidden")) renderResumoGrupos();
+    }
+
+    window.toggleRefeicoesModal = function() {
+      const modal = document.getElementById("refeicoes-modal");
+      modal.classList.toggle("hidden");
+      if (!modal.classList.contains("hidden")) renderRefeicoesConteudo();
+    }
+
+    window.togglePerdidosModal = function() {
+      const modal = document.getElementById("perdidos-modal");
+      modal.classList.toggle("hidden");
+      if (!modal.classList.contains("hidden")) renderPerdidosLista();
+    }
+
+    function renderResumoGrupos() {
+      const lista = document.getElementById("resumo-grupos-lista");
+      lista.innerHTML = "";
+      const gruposMap = {};
+
+      rooms.forEach(r => {
+        r.guests.forEach(g => {
+          gruposMap[g.group] = (gruposMap[g.group] || 0) + 1;
+        });
+      });
+      globalUnallocatedGuests.forEach(g => {
+        gruposMap[g.group] = (gruposMap[g.group] || 0) + 1;
+      });
+
+      const gruposNomes = Object.keys(gruposMap);
+      if (gruposNomes.length === 0) {
+        lista.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Nenhum grupo registrado.</p>`;
+        return;
+      }
+
+      gruposNomes.forEach(grupo => {
+        const totalNoGrupo = gruposMap[grupo];
+        const acomodadosNoGrupo = rooms.reduce((acc, r) => acc + r.guests.filter(g => g.group === grupo).length, 0);
+        const div = document.createElement("div");
+        div.className = "bg-slate-50 border border-slate-100 p-3 rounded-2xl flex justify-between items-center";
+        div.innerHTML = `
+          <div>
+            <strong class="text-slate-900 font-bold block">${grupo}</strong>
+            <span class="text-slate-400 text-[11px]">${acomodadosNoGrupo} alocados neste período</span>
+          </div>
+          <span class="bg-casar-light text-casar-pink px-2.5 py-1 rounded-full text-xs font-bold">${totalNoGrupo} total</span>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    window.abrirModalSelecaoQuarto = function(roomId) {
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      if (room.guests.length >= room.maxCap) {
+        alert("Este quarto já atingiu a capacidade máxima!");
+        return;
+      }
+
+      document.getElementById("modal-target-room-id").value = roomId;
+      document.getElementById("modal-guest-search").value = "";
+      document.getElementById("modal-new-name").value = "";
+      document.getElementById("modal-new-acessivel").checked = false;
+      document.getElementById("modal-new-bebe").checked = false;
+
+      renderModalGuestList();
+      document.getElementById("select-guest-modal").classList.remove("hidden");
+    }
+
+    window.fecharModalSelecaoQuarto = function() {
+      document.getElementById("select-guest-modal").classList.add("hidden");
+    }
+
+    window.renderModalGuestList = function() {
+      const container = document.getElementById("modal-unallocated-list");
+      container.innerHTML = "";
+      const searchVal = document.getElementById("modal-guest-search").value.toLowerCase();
+
+      const filtered = globalUnallocatedGuests.filter(g => g.name.toLowerCase().includes(searchVal));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Nenhum convidado encontrado na lista global.</p>`;
+        return;
+      }
+
+      filtered.forEach(guest => {
+        let badges = `<span class="text-[9px] px-2 py-0.5 rounded-full font-semibold bg-rose-50 text-casar-pink border border-rose-100">${guest.group}</span>`;
+        if (guest.acessivel) badges += ` <span class="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-blue-50 text-blue-600">♿</span>`;
+        if (guest.bebe) badges += ` <span class="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-50 text-amber-600">👶</span>`;
+
+        const div = document.createElement("div");
+        div.className = "bg-slate-50 hover:bg-rose-50/50 border border-slate-200 p-2.5 rounded-2xl flex items-center justify-between gap-2 transition cursor-pointer";
+        div.innerHTML = `
+          <div class="min-w-0 flex-1 flex items-center gap-2">
+            <input type="checkbox" value="${guest.name}" class="modal-guest-checkbox accent-rose-500 w-4 h-4 cursor-pointer">
+            <div class="min-w-0 flex-1">
+              <strong class="text-xs text-slate-800 font-bold block truncate">${guest.name}</strong>
+              <div class="flex items-center gap-1 mt-0.5 flex-wrap">${badges}</div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.criarEAdicionarNaModal = function() {
+      const roomId = parseInt(document.getElementById("modal-target-room-id").value);
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      const nameInput = document.getElementById("modal-new-name");
+      const groupInput = document.getElementById("modal-new-group");
+      const acessivelChk = document.getElementById("modal-new-acessivel");
+      const bebeChk = document.getElementById("modal-new-bebe");
+
+      const nameVal = nameInput.value.trim();
+      if (!nameVal) {
+        alert("Digite o nome do novo convidado.");
+        return;
+      }
+
+      if (room.guests.length >= room.maxCap) {
+        alert("Este quarto já atingiu a capacidade máxima!");
+        return;
+      }
+
+      salvarBackupEstado();
+      const novoConvidado = {
+        name: nameVal,
+        group: groupInput.value,
+        acessivel: acessivelChk.checked,
+        bebe: bebeChk.checked,
+        checkedIn: false
+      };
+
+      if (!globalUnallocatedGuests.some(g => g.name.toLowerCase() === nameVal.toLowerCase())) {
+        globalUnallocatedGuests.push(novoConvidado);
+      }
+
+      room.guests.push(novoConvidado);
+      registrarAcao(`Criou e adicionou ${novoConvidado.name} direto no ${room.name}`);
+      
+      nameInput.value = "";
+      acessivelChk.checked = false;
+      bebeChk.checked = false;
+
+      syncToFirebase();
+      fecharModalSelecaoQuarto();
+      renderAll();
+    }
+
+    window.confirmarAdicaoMultipla = function() {
+      const roomId = parseInt(document.getElementById("modal-target-room-id").value);
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      const checkboxes = document.querySelectorAll(".modal-guest-checkbox:checked");
+      if (checkboxes.length === 0) {
+        alert("Selecione pelo menos um convidado.");
+        return;
+      }
+
+      const vagasDisponiveis = room.maxCap - room.guests.length;
+      if (checkboxes.length > vagasDisponiveis) {
+        alert(`Você selecionou ${checkboxes.length} pessoas, mas o quarto só tem ${vagasDisponiveis} vaga(s) restante(s)!`);
+        return;
+      }
+
+      salvarBackupEstado();
+      let nomesAdicionados = [];
+
+      checkboxes.forEach(chk => {
+        const guestName = chk.value;
+        const guestObj = globalUnallocatedGuests.find(g => g.name === guestName);
+        if (guestObj) {
+          if (!room.guests.some(g => g.name === guestName)) {
+            room.guests.push(JSON.parse(JSON.stringify(guestObj)));
+            nomesAdicionados.push(guestName);
+          }
+        }
+      });
+
+      if (nomesAdicionados.length > 0) {
+        registrarAcao(`Adicionou ${nomesAdicionados.join(', ')} no ${room.name}`);
+        syncToFirebase();
+      }
+      fecharModalSelecaoQuarto();
+      renderAll();
+    }
+
+    window.adicionarVeiculoQuarto = function(roomId) {
+      const input = document.getElementById(`novo-veiculo-${roomId}`);
+      const val = input.value.trim();
+      if (!val) return;
+
+      const room = rooms.find(r => r.id === roomId);
+      if (room) {
+        salvarBackupEstado();
+        if (!room.veiculos) room.veiculos = [];
+        room.veiculos.push(val);
+        input.value = "";
+        registrarAcao(`Adicionou veículo (${val}) ao ${room.name}`);
+        syncToFirebase();
+        renderRooms();
+        updateDashboardStats();
+      }
+    }
+
+    window.removerVeiculoQuarto = function(roomId, index) {
+      const room = rooms.find(r => r.id === roomId);
+      if (room && room.veiculos) {
+        salvarBackupEstado();
+        const removido = room.veiculos.splice(index, 1)[0];
+        registrarAcao(`Removeu veículo (${removido}) do ${room.name}`);
+        syncToFirebase();
+        renderRooms();
+        updateDashboardStats();
+      }
+    }
+
+    function renderRefeicoesConteudo() {
+      const container = document.getElementById("refeicoes-conteudo");
+      container.innerHTML = "";
+      
+      let totalHomens = 0;
+      let totalMulheres = 0;
+      let totalCriancas = 0;
+
+      const nomesMulheres = ["alessandra", "daiane", "cachacíntia", "ana", "alexandrina", "dani", "edileusa", "maria", "juliana", "camila", "beatriz", "mariana", "fernanda", "patricia", "bruna", "amanda", "larissa", "gabriela", "rafaela", "leticia", "caroline", "vanessa", "luana"];
+
+      rooms.forEach(r => {
+        r.guests.forEach(g => {
+          if (g.bebe) {
+            totalCriancas++;
+          } else {
+            const primeiroNome = g.name.trim().split(" ")[0].toLowerCase();
+            const ehMulher = nomesMulheres.includes(primeiroNome) || primeiroNome.endsWith('a') || (g.group === "Noivo e Noiva" && primeiroNome === "alessandra");
+            if (ehMulher) {
+              totalMulheres++;
+            } else {
+              totalHomens++;
+            }
+          }
+        });
+      });
+
+      const totalHospedes = totalHomens + totalMulheres + totalCriancas;
+
+      const paesTotal = (totalHomens * 2) + (totalMulheres * 2) + (totalCriancas * 1);
+      const presuntoGr = (totalHomens * 50) + (totalMulheres * 40) + (totalCriancas * 20);
+      const mussarelaGr = (totalHomens * 50) + (totalMulheres * 40) + (totalCriancas * 20);
+      const mortadelaGr = (totalHomens * 40) + (totalMulheres * 30) + (totalCriancas * 15);
+      const cafeMl = (totalHomens * 300) + (totalMulheres * 250);
+      const sucoMl = (totalHomens * 250) + (totalMulheres * 200) + (totalCriancas * 150);
+      const garrafasCafe = Math.max(1, Math.ceil(cafeMl / 1000));
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="bg-casar-light p-4 rounded-2xl border border-rose-200">
+            <div class="flex justify-between items-center mb-2">
+              <strong class="text-slate-900 font-bold text-sm">👥 Perfil dos Hospedes (Alocados)</strong>
+              <span class="bg-casar-pink text-white px-2.5 py-0.5 rounded-full text-xs font-bold">${totalHospedes} Pessoas</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center text-xs pt-1 border-t border-rose-100">
+              <div class="bg-white/70 p-2 rounded-xl">
+                <span class="block text-slate-400 text-[10px] uppercase font-bold">Homens</span>
+                <strong class="text-slate-800 text-sm">${totalHomens}</strong>
+              </div>
+              <div class="bg-white/70 p-2 rounded-xl">
+                <span class="block text-slate-400 text-[10px] uppercase font-bold">Mulheres</span>
+                <strong class="text-slate-800 text-sm">${totalMulheres}</strong>
+              </div>
+              <div class="bg-white/70 p-2 rounded-xl">
+                <span class="block text-slate-400 text-[10px] uppercase font-bold">Crianças</span>
+                <strong class="text-slate-800 text-sm">${totalCriancas}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+            <strong class="text-slate-900 font-bold text-sm flex items-center gap-1.5 text-casar-pink">
+              <i class="fa-solid fa-cart-shopping"></i> Lista de Compras Calculada para o Café da Manhã
+            </strong>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <div class="bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                <span class="text-slate-600 font-medium">🥖 Pão Francês:</span>
+                <strong class="text-slate-900 font-bold">${Math.ceil(paesTotal)} unidades</strong>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                <span class="text-slate-600 font-medium">☕ Café (Garrafas 1L):</span>
+                <strong class="text-slate-900 font-bold">${garrafasCafe} garrafas (${(cafeMl/1000).toFixed(1)}L)</strong>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                <span class="text-slate-600 font-medium">🥩 Presunto:</span>
+                <strong class="text-slate-900 font-bold">${(presuntoGr/1000).toFixed(2)} kg</strong>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                <span class="text-slate-600 font-medium">🧀 Mussarela:</span>
+                <strong class="text-slate-900 font-bold">${(mussarelaGr/1000).toFixed(2)} kg</strong>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                <span class="text-slate-600 font-medium">🥪 Mortadela:</span>
+                <strong class="text-slate-900 font-bold">${(mortadelaGr/1000).toFixed(2)} kg</strong>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                <span class="text-slate-600 font-medium">🧃 Suco de Laranja:</span>
+                <strong class="text-slate-900 font-bold">${(sucoMl/1000).toFixed(1)} litros</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    window.adicionarItemPerdido = function(e) {
+      e.preventDefault();
+      const itemInput = document.getElementById("perdido-item");
+      const localInput = document.getElementById("perdido-local");
+      if (itemInput.value.trim() && localInput.value.trim()) {
+        salvarBackupEstado();
+        itensPerdidos.push({
+          id: Date.now(),
+          item: itemInput.value.trim(),
+          local: localInput.value.trim(),
+          resolvido: false
+        });
+        itemInput.value = "";
+        localInput.value = "";
+        registrarAcao(`Cadastrou achado/perdido: ${itemInput.value}`);
+        syncToFirebase();
+        renderPerdidosLista();
+      }
+    }
+
+    window.toggleItemResolvido = function(id) {
+      const item = itensPerdidos.find(i => i.id === id);
+      if (item) {
+        salvarBackupEstado();
+        item.resolvido = !item.resolvido;
+        syncToFirebase();
+        renderPerdidosLista();
+      }
+    }
+
+    window.removerItemPerdido = function(id) {
+      salvarBackupEstado();
+      itensPerdidos = itensPerdidos.filter(i => i.id !== id);
+      syncToFirebase();
+      renderPerdidosLista();
+    }
+
+    function renderPerdidosLista() {
+      const lista = document.getElementById("perdidos-lista");
+      lista.innerHTML = "";
+      if (itensPerdidos.length === 0) {
+        lista.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Nenhum item cadastrado no achados e perdidos.</p>`;
+        return;
+      }
+      itensPerdidos.forEach(i => {
+        const div = document.createElement("div");
+        div.className = `p-3 rounded-2xl border flex justify-between items-center ${i.resolvido ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-800'}`;
+        div.innerHTML = `
+          <div>
+            <strong class="font-bold block ${i.resolvido ? 'line-through' : ''}">${i.item}</strong>
+            <span class="text-[10px] text-slate-500">Local: ${i.local}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="toggleItemResolvido(${i.id})" class="text-[10px] px-2.5 py-1 rounded-xl font-bold ${i.resolvido ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}">
+              ${i.resolvido ? 'Devolvido ✓' : 'Pendente'}
+            </button>
+            <button onclick="removerItemPerdido(${i.id})" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    window.exportarExcelCSV = function() {
+      let csvContent = `data:text/csv;charset=utf-8,Periodo,Quarto,Convidado,Grupo,Acessivel,Bebe,CheckIn,Veiculos\n`;
+      Object.keys(periodosData).forEach(pKey => {
+        const pRooms = periodosData[pKey].rooms;
+        pRooms.forEach(r => {
+          const veiculosStr = (r.veiculos || []).join(' | ');
+          r.guests.forEach(g => {
+            csvContent += `"${pKey}","${r.name}","${g.name}","${g.group}",${g.acessivel ? 'Sim' : 'Não'},${g.bebe ? 'Sim' : 'Não'},${g.checkedIn ? 'Sim' : 'Não'},"${veiculosStr}"\n`;
+          });
+        });
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "acomodacoes_sitio_florentino_todos_periodos.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function renderHistoricoList() {
+      const lista = document.getElementById("historico-lista");
+      lista.innerHTML = "";
+      if (historico.length === 0) {
+        lista.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Nenhuma movimentação registrada ainda.</p>`;
+        return;
+      }
+      historico.forEach(h => {
+        const div = document.createElement("div");
+        div.className = "bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-slate-700 flex items-center gap-2";
+        div.innerHTML = `<i class="fa-solid fa-circle-dot text-casar-pink text-[8px]"></i> <span>${h.texto}</span>`;
+        lista.appendChild(div);
+      });
+    }
+
+    window.enviarWhatsApp = function(roomId, roomName, beds, guestsNames) {
+      const room = rooms.find(r => r.id === roomId);
+      let bedsText = beds;
+      if (room) {
+        if (room.extraColchao) bedsText += " + Colchão adicional no chão";
+        if (room.criancaGratis) bedsText += " + 1 Criança";
+      }
+      const veiculosText = (room && room.veiculos && room.veiculos.length > 0) ? room.veiculos.join(', ') : 'Nenhum cadastrado';
+      const texto = `Olá! Passando para informar que sua acomodação no Sítio Florentino (${periodoAtual.toUpperCase()}) foi definida:\n\n🏠 *${roomName}*\n🛏️ Acomodação: ${bedsText}\n👥 Acompanhantes no quarto: ${guestsNames.join(', ')}\n🚗 Veículos cadastrados: ${veiculosText}\n\n*Orientações importantes:*\n• Check-in: A partir das 08h da manhã antes da festa.\n• Café da manhã: 08h, exclusivo para quem estiver no sítio.\n• Como vir de SP: Use o Google Maps (Evite o Waze). Referência: Subida ao lado do McDonald's de Mairiporã.\n• Proibido fumar dentro dos quartos.\n\nEsperamos você lá com muito carinho! 💍✨`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
+    }
+
+    window.clicarAnimacao = function() {
+      const box = document.getElementById("animacao-box");
+      const balao = document.getElementById("balao-aviso");
+      box.classList.add("paused");
+      balao.classList.remove("hidden");
+      setTimeout(() => {
+        box.classList.remove("paused");
+        balao.classList.add("hidden");
+      }, 3500);
+    }
+
+    window.switchMobileView = function(view) {
+      const guestsSec = document.getElementById("guests-section");
+      const roomsSec = document.getElementById("rooms-section");
+      const mapSec = document.getElementById("mapa-section");
+      const guiaSec = document.getElementById("guia-regras-section");
+      const btnGuests = document.getElementById("tab-btn-guests");
+      const btnRooms = document.getElementById("tab-btn-rooms");
+      const btnMap = document.getElementById("tab-btn-map");
+
+      guestsSec.classList.add("hidden");
+      roomsSec.classList.add("hidden");
+      mapSec.classList.add("hidden");
+      guiaSec.classList.add("hidden");
+      btnGuests.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 transition";
+      btnRooms.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 transition";
+      btnMap.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-600 transition";
+
+      if (view === 'guests') {
+        guestsSec.classList.remove("hidden");
+        btnGuests.className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-white shadow-xs text-casar-pink transition";
+      } else if (view === 'rooms') {
+        roomsSec.classList.remove("hidden");
+        btnRooms.className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-white shadow-xs text-casar-pink transition";
+      } else {
+        mapSec.classList.remove("hidden");
+        guiaSec.classList.remove("hidden");
+        roomsSec.classList.remove("hidden");
+        btnMap.className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-white shadow-xs text-casar-pink transition";
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.switchTab = function(tab) {
+      document.getElementById("login-box").classList.toggle("hidden", tab !== 'login');
+      document.getElementById("register-box").classList.toggle("hidden", tab !== 'register');
+    }
+
+    window.handleRegister = async function(e) {
+      e.preventDefault();
+      try {
+        await firebaseReady;
+        const name = document.getElementById("reg-name").value.trim();
+        const email = document.getElementById("reg-email").value.trim().toLowerCase();
+        const password = document.getElementById("reg-password").value;
+
+        if (password.length < 6) {
+          alert("A senha precisa ter pelo menos 6 caracteres.");
+          return;
+        }
+        if (users.find(u => String(u.email || "").toLowerCase() === email)) {
+          alert("E-mail já cadastrado.");
+          return;
+        }
+
+        users.push({ email, name, password, status: "PENDING", isAdmin: false });
+        await syncToFirebase();
+        alert("Solicitação enviada com sucesso!");
+        switchTab('login');
+        document.getElementById("register-form").reset();
+      } catch (err) {
+        console.error("Erro no cadastro:", err);
+        alert("Não foi possível enviar a solicitação. Tente novamente.");
+      }
+    }
+
+    window.handleLogin = async function(e) {
+      e.preventDefault();
+      try {
+        await firebaseReady;
+        const email = document.getElementById("login-email").value.trim().toLowerCase();
+        const password = document.getElementById("login-password").value;
+        const user = users.find(u => String(u.email || "").toLowerCase() === email && u.password === password);
+
+        if (!user) return alert("E-mail ou senha incorretos.");
+        if (user.status === "PENDING") return alert("Sua conta está aguardando aprovação do administrador.");
+        if (user.status === "BLOCKED") return alert("Acesso bloqueado.");
+
+        currentUser = user;
+        localStorage.setItem("casamento_user_email", currentUser.email);
+        showAppScreen();
+      } catch (err) {
+        console.error("Erro no login:", err);
+        alert("Não foi possível carregar os dados de acesso. Verifique a conexão com o Firebase.");
+      }
+    }
+
+    function showAppScreen() {
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("app-screen").classList.remove("hidden");
+      
+      const statusBar = document.getElementById("user-status-bar");
+      statusBar.classList.remove("hidden");
+      statusBar.classList.add("flex");
+
+      document.getElementById("logged-user-name").innerText = currentUser.name;
+      document.getElementById("logged-user-role").innerText = currentUser.isAdmin ? "Administrador" : (currentUser.status === "APPROVED_EDIT" ? "Editor" : "Visualizador");
+
+      if (currentUser.isAdmin) {
+        document.getElementById("admin-panel-btn").classList.remove("hidden");
+      }
+    }
+
+    window.logout = function() {
+      localStorage.removeItem("casamento_user_email");
+      currentUser = null;
+      document.getElementById("auth-screen").classList.remove("hidden");
+      document.getElementById("app-screen").classList.add("hidden");
+      document.getElementById("user-status-bar").classList.remove("flex");
+      document.getElementById("user-status-bar").classList.add("hidden");
+      document.getElementById("admin-panel-btn").classList.add("hidden");
+    }
+
+    window.toggleAdminModal = function() {
+      const modal = document.getElementById("admin-modal");
+      modal.classList.toggle("hidden");
+      if (!modal.classList.contains("hidden")) renderApprovalList();
+    }
+
+    function renderApprovalList() {
+      const list = document.getElementById("users-approval-list");
+      list.innerHTML = "";
+      if (users.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Nenhum usuário cadastrado.</p>`;
+        return;
+      }
+      users.forEach(u => {
+        if (u.email === ADMIN_EMAIL) return;
+        const div = document.createElement("div");
+        div.className = "bg-slate-50 border border-slate-200 p-3 rounded-2xl flex items-center justify-between gap-3 text-xs";
+        div.innerHTML = `
+          <div>
+            <strong class="text-slate-900 font-bold block">${u.name}</strong>
+            <span class="text-slate-400 text-[11px]">${u.email}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <select onchange="updateUserStatus('${u.email}', this.value)" class="px-2 py-1.5 border border-slate-200 rounded-xl bg-white font-semibold text-[11px] text-slate-700">
+              <option value="PENDING" ${u.status === 'PENDING' ? 'selected' : ''}>Pendente</option>
+              <option value="APPROVED_VIEW" ${u.status === 'APPROVED_VIEW' ? 'selected' : ''}>Ver</option>
+              <option value="APPROVED_EDIT" ${u.status === 'APPROVED_EDIT' ? 'selected' : ''}>Editar</option>
+              <option value="BLOCKED" ${u.status === 'BLOCKED' ? 'selected' : ''}>Bloqueado</option>
+            </select>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    window.updateUserStatus = function(email, newStatus) {
+      const user = users.find(u => u.email === email);
+      if (user) {
+        user.status = newStatus;
+        syncToFirebase();
+        alert(`Status de ${user.name} atualizado para ${newStatus}`);
+      }
+    }
+
+    const addGuestForm = document.getElementById("add-guest-form");
+    if (addGuestForm) {
+      addGuestForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const inputName = document.getElementById("guest-name");
+        const inputGroup = document.getElementById("guest-group-input");
+        const chkAcessivel = document.getElementById("guest-acessivel");
+        const chkBebe = document.getElementById("guest-bebe");
+
+        const nameVal = inputName.value.trim();
+        if (!nameVal) return;
+
+        salvarBackupEstado();
+        globalUnallocatedGuests.push({
+          name: nameVal,
+          group: inputGroup.value,
+          acessivel: chkAcessivel.checked,
+          bebe: chkBebe.checked
+        });
+
+        inputName.value = "";
+        chkAcessivel.checked = false;
+        chkBebe.checked = false;
+
+        registrarAcao(`Adicionou convidado à lista global: ${nameVal}`);
+        syncToFirebase();
+        renderAll();
+      });
+    }
+
+    window.setRoomFilter = function(filter) {
+      currentRoomFilter = filter;
+      ['all', 'available', 'full', 'pendentes', 'acessivel', 'bebe'].forEach(f => {
+        const btn = document.getElementById(`filter-btn-${f}`);
+        if(btn) {
+          if(f === filter) {
+            btn.className = "px-3 py-2 rounded-xl bg-white shadow-xs text-casar-pink font-bold transition";
+          } else {
+            btn.className = "px-3 py-2 rounded-xl text-slate-600 transition";
+          }
+        }
+      });
+      renderRooms();
+    }
+
+    window.filterUnallocatedGuests = function() {
+      renderUnallocated();
+    };
+
+    function renderAll() {
+      renderUnallocated();
+      renderRooms();
+      updateDashboardStats();
+    }
+
+    function updateDashboardStats() {
+      const totalCapacity = rooms.reduce((acc, r) => acc + r.maxCap, 0);
+      const totalAllocated = rooms.reduce((acc, r) => acc + r.guests.length, 0);
+      const totalVagasLivres = Math.max(0, totalCapacity - totalAllocated);
+      const taxaOcupacao = totalCapacity > 0 ? Math.round((totalAllocated / totalCapacity) * 100) : 0;
+
+      const totalCheckins = rooms.reduce((acc, r) => acc + r.guests.filter(g => g.checkedIn).length, 0);
+      const veiculosCount = rooms.reduce((acc, r) => acc + (r.veiculos ? r.veiculos.length : 0), 0);
+
+      document.getElementById("total-capacity").innerText = totalCapacity;
+      document.getElementById("total-allocated").innerText = totalAllocated;
+      document.getElementById("unallocated-count").innerText = globalUnallocatedGuests.length;
+      document.getElementById("mobile-unallocated-count").innerText = globalUnallocatedGuests.length;
+      document.getElementById("total-vagas-livres").innerText = totalVagasLivres;
+
+      document.getElementById("stat-taxa-ocupacao").innerText = `${taxaOcupacao}%`;
+      document.getElementById("stat-checkins").innerText = `${totalCheckins} / ${totalAllocated}`;
+      document.getElementById("stat-vagas-livres").innerText = totalVagasLivres;
+      document.getElementById("stat-veiculos").innerText = `${veiculosCount} Cadastrados`;
+    }
+
+    function renderUnallocated() {
+      const listContainer = document.getElementById("unallocated-list");
+      listContainer.innerHTML = "";
+
+      const searchVal = document.getElementById("guest-search").value.toLowerCase();
+      const groupVal = document.getElementById("group-filter").value;
+
+      const filtered = globalUnallocatedGuests.filter(g => {
+        const matchSearch = g.name.toLowerCase().includes(searchVal);
+        const matchGroup = groupVal === "" || g.group === groupVal;
+        const matchSpecial = !specialFilterActive || (specialFilterActive === 'acessivel' ? g.acessivel : g.bebe);
+        return matchSearch && matchGroup && matchSpecial;
+      });
+
+      document.getElementById("contador-lista-filtrada").innerText = `${filtered.length} exibidos`;
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Nenhum convidado na lista global.</p>`;
+        return;
+      }
+
+      filtered.forEach((guest) => {
+        const div = document.createElement("div");
+        div.className = "guest-card bg-slate-50 border border-slate-200/80 p-2.5 rounded-2xl flex items-center justify-between gap-2 shadow-2xs";
+        div.draggable = true;
+        
+        div.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", JSON.stringify({ type: "unallocated", name: guest.name }));
+        });
+
+        let badges = `<span class="text-[9px] px-2 py-0.5 rounded-full font-semibold bg-rose-50 text-casar-pink border border-rose-100">${guest.group}</span>`;
+        if (guest.acessivel) badges += ` <span class="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-blue-50 text-blue-600" title="Acessível">♿</span>`;
+        if (guest.bebe) badges += ` <span class="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-50 text-amber-600" title="Bebê / Criança">👶</span>`;
+
+        div.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <i class="fa-solid fa-grip-vertical text-slate-300 text-xs cursor-grab"></i>
+            <div class="min-w-0 flex-1">
+              <strong class="text-xs text-slate-800 font-bold block truncate">${guest.name}</strong>
+              <div class="flex items-center gap-1 mt-0.5 flex-wrap">${badges}</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="abrirModalEdicao('${guest.name}', '${guest.group}', ${guest.acessivel}, ${guest.bebe}, null)" class="text-slate-400 hover:text-casar-pink p-1 text-xs" title="Editar Convidado"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="removerConvidadoLista('${guest.name}')" class="text-slate-300 hover:text-rose-600 p-1 text-xs" title="Remover Convidado"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+
+    window.removerConvidadoLista = function(name) {
+      if (confirm(`Deseja realmente excluir ${name} da lista global?`)) {
+        salvarBackupEstado();
+        globalUnallocatedGuests = globalUnallocatedGuests.filter(g => g.name !== name);
+        registrarAcao(`Removeu ${name} da lista global`);
+        syncToFirebase();
+        renderAll();
+      }
+    }
+
+    function renderRooms() {
+      const grid = document.getElementById("rooms-grid");
+      grid.innerHTML = "";
+
+      let filteredRooms = rooms.filter(r => {
+        if (setorFiltroAtual === 'suites-principais') return r.id === 11;
+        if (setorFiltroAtual === 'bloco-principal-1') return r.id >= 1 && r.id <= 5;
+        if (setorFiltroAtual === 'bloco-principal-2') return r.id >= 6 && r.id <= 10;
+        return true;
+      });
+
+      filteredRooms = filteredRooms.filter(r => {
+        const isFull = r.guests.length >= r.maxCap;
+        const isAvailable = r.guests.length < r.maxCap;
+        const hasPendentes = r.guests.some(g => !g.checkedIn);
+        const hasAcessivel = r.guests.some(g => g.acessivel) || r.id <= 5;
+        const hasBebe = r.guests.some(g => g.bebe);
+
+        if (currentRoomFilter === 'available') return isAvailable;
+        if (currentRoomFilter === 'full') return isFull;
+        if (currentRoomFilter === 'pendentes') return hasPendentes;
+        if (currentRoomFilter === 'acessivel') return hasAcessivel;
+        if (currentRoomFilter === 'bebe') return hasBebe;
+        return true;
+      });
+
+      filteredRooms.forEach(room => {
+        const card = document.createElement("div");
+        card.className = "room-card bg-white rounded-3xl p-5 border border-rose-100/80 shadow-sm flex flex-col justify-between";
+        
+        const isFull = room.guests.length >= room.maxCap;
+        const statusBadge = isFull 
+          ? `<span class="bg-rose-50 text-rose-700 border border-rose-200 text-[10px] px-2.5 py-1 rounded-full font-bold">Lotado</span>`
+          : `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-1 rounded-full font-bold">${room.maxCap - room.guests.length} vagas livres</span>`;
+
+        const percentOcupacao = Math.min(100, Math.round((room.guests.length / room.maxCap) * 100));
+        const barColor = isFull ? 'bg-rose-500' : (percentOcupacao > 50 ? 'bg-amber-500' : 'bg-emerald-500');
+
+        let bedsText = room.beds;
+        if (room.extraColchao) bedsText += " + 🛏️ Colchão extra";
+        if (room.criancaGratis) bedsText += " + 👶 Criança";
+
+        const guestsNamesList = room.guests.map(g => g.name);
+
+        const fraseEstadia = room.id === 11 
+          ? `<div class="text-center italic text-sm md:text-base text-rose-900 font-serif mt-3 px-2">"O refúgio perfeito onde o nosso 'para sempre' começa." 💍</div>`
+          : `<div class="text-center italic text-sm md:text-base text-slate-700 font-serif mt-3 px-2">"Que o descanso após a celebração seja tão inesquecível quanto o nosso dia." ✨</div>`;
+
+        let veiculosHtml = '';
+        if (room.veiculos && room.veiculos.length > 0) {
+          veiculosHtml = room.veiculos.map((v, idx) => `
+            <div class="flex items-center justify-between bg-white px-2 py-1 rounded-lg border border-rose-100 text-[11px]">
+              <span class="text-slate-700 font-medium">🚗 ${v}</span>
+              <button onclick="removerVeiculoQuarto(${room.id}, ${idx})" class="text-slate-400 hover:text-rose-600 px-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          `).join('');
+        } else {
+          veiculosHtml = `<span class="text-[10px] text-slate-400 italic">Nenhum veículo cadastrado</span>`;
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="print-single-header mb-6 pb-4 border-b border-rose-200 text-center">
+              <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.25em] mb-1">SÍTIO FLORENTINO</div>
+              <div class="text-3xl font-script text-slate-900 my-1">Alessandra & Marques</div>
+              <div class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-1">ACOMODAÇÕES EXCLUSIVAS &bull; CASAMENTO</div>
+              <div class="mt-4 border border-rose-200 rounded-2xl py-3 px-4 bg-rose-50/20 max-w-lg mx-auto">
+                <h2 class="text-xl font-bold text-slate-900 font-serif">${room.name}</h2>
+                <p class="text-xs text-slate-600 font-medium mt-0.5"><i class="fa-solid fa-bed mr-1 text-casar-pink"></i> ${bedsText}</p>
+              </div>
+              ${fraseEstadia}
+            </div>
+
+            <div class="no-print mb-3">
+              <div class="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                <span>Ocupação (${room.guests.length}/${room.maxCap})</span>
+                <span>${percentOcupacao}%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/60">
+                <div class="${barColor} h-full transition-all duration-500 rounded-full" style="width: ${percentOcupacao}%"></div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-start gap-2 mb-3">
+              <div>
+                <h3 class="font-bold text-slate-900 font-serif text-base flex items-center gap-2">
+                  ${room.name} 
+                </h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">🛏️ ${bedsText}</p>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                ${statusBadge}
+                <button onclick="printSingleRoom(${room.id})" class="no-print bg-slate-50 hover:bg-slate-100 text-slate-600 p-2 rounded-xl text-xs transition border border-slate-200" title="Imprimir Quarto Individual"><i class="fa-solid fa-print"></i></button>
+                <button onclick="enviarWhatsApp(${room.id}, '${room.name}', '${room.beds}', ${JSON.stringify(guestsNamesList)})" class="no-print bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2 rounded-xl text-xs transition border border-emerald-200" title="Enviar WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+              </div>
+            </div>
+
+            <div class="no-print bg-casar-light/60 p-2.5 rounded-2xl border border-rose-100 mb-3 space-y-2">
+              <div class="flex gap-1.5">
+                <input type="text" id="novo-veiculo-${room.id}" placeholder="Placa / Modelo do carro..." class="flex-1 px-2.5 py-1 bg-white border border-rose-200 rounded-xl text-[11px] focus:outline-none">
+                <button type="button" onclick="adicionarVeiculoQuarto(${room.id})" class="bg-casar-pink hover-casar-pink text-white px-3 py-1 rounded-xl text-[11px] font-bold transition shadow-2xs">Adicionar Carro</button>
+              </div>
+              <div class="space-y-1">
+                ${veiculosHtml}
+              </div>
+            </div>
+
+            <div class="no-print flex items-center justify-between mb-3 text-[11px] text-slate-600 px-1">
+              <div class="flex items-center gap-3">
+                <label class="flex items-center gap-1 cursor-pointer font-medium"><input type="checkbox" ${room.extraColchao ? 'checked' : ''} onchange="toggleRoomExtra(${room.id}, 'colchao')" class="accent-rose-400"> + Colchão</label>
+                <label class="flex items-center gap-1 cursor-pointer font-medium"><input type="checkbox" ${room.criancaGratis ? 'checked' : ''} onchange="toggleRoomExtra(${room.id}, 'crianca')" class="accent-rose-400"> + Criança</label>
+              </div>
+              <button onclick="abrirModalSelecaoQuarto(${room.id})" class="bg-rose-50 hover:bg-rose-100 text-casar-pink border border-rose-200 px-2.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1" title="Adicionar ou criar convidados">
+                <i class="fa-solid fa-plus text-[10px]"></i> Adicionar da Lista
+              </button>
+            </div>
+
+            <!-- DROPZONE -->
+            <div class="room-dropzone bg-slate-50/70 border-2 border-dashed border-slate-200 rounded-2xl p-2.5 space-y-2" data-room-id="${room.id}">
+              ${room.guests.length === 0 ? `<div class="text-center py-4 text-xs text-slate-400 font-medium pointer-events-none">Arraste convidados ou clique em Adicionar da Lista</div>` : ''}
+              ${room.guests.map(guest => {
+                let badges = `<span class="text-[9px] px-2 py-0.5 rounded-full font-semibold bg-rose-50 text-casar-pink border border-rose-100">${guest.group}</span>`;
+                if (guest.acessivel) badges += ` <span class="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-blue-50 text-blue-600">♿</span>`;
+                if (guest.bebe) badges += ` <span class="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-50 text-amber-600">👶</span>`;
+                
+                return `
+                  <div class="guest-card bg-white border border-slate-200/80 p-2.5 rounded-xl flex items-center justify-between gap-2 shadow-2xs" draggable="true" ondragstart="event.dataTransfer.setData('text/plain', JSON.stringify({type: 'room', roomId: ${room.id}, name: '${guest.name}'}))">
+                    <div class="flex items-center gap-2 min-w-0 flex-1">
+                      <i class="fa-solid fa-grip-vertical text-slate-300 text-xs cursor-grab"></i>
+                      <div class="min-w-0 flex-1">
+                        <strong class="text-xs text-slate-800 font-bold block truncate">${guest.name}</strong>
+                        <div class="flex items-center gap-1 mt-0.5 flex-wrap">${badges}</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <button onclick="toggleCheckIn(${room.id}, '${guest.name}')" class="p-1 text-xs ${guest.checkedIn ? 'text-emerald-600' : 'text-slate-300 hover:text-slate-500'}" title="Check-in Realizado"><i class="fa-solid fa-circle-check text-sm"></i></button>
+                      <button onclick="abrirModalEdicao('${guest.name}', '${guest.group}',${guest.acessivel}, ${guest.bebe},${room.id})" class="text-slate-400 hover:text-casar-pink p-1 text-xs" title="Editar Convidado"><i class="fa-solid fa-pen"></i></button>
+                      <button onclick="removerConvidadoQuarto(${room.id}, '${guest.name}')" class="text-slate-300 hover:text-rose-600 p-1 text-xs" title="Remover do Quarto"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+
+        const dropzone = card.querySelector(".room-dropzone");
+        dropzone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          dropzone.classList.add("drag-over");
+        });
+        dropzone.addEventListener("dragleave", () => {
+          dropzone.classList.remove("drag-over");
+        });
+        dropzone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dropzone.classList.remove("drag-over");
+          const dataStr = e.dataTransfer.getData("text/plain");
+          if (!dataStr) return;
+          const data = JSON.parse(dataStr);
+
+          salvarBackupEstado();
+
+          if (room.guests.length >= room.maxCap) {
+            alert("Este quarto atingiu a capacidade máxima!");
+            return;
+          }
+
+          let movedGuest = null;
+          if (data.type === "room") {
+            const sourceRoom = rooms.find(r => r.id === data.roomId);
+            if (sourceRoom) {
+              const idx = sourceRoom.guests.findIndex(g => g.name === data.name);
+              if (idx !== -1) {
+                movedGuest = sourceRoom.guests.splice(idx, 1)[0];
+              }
+            }
+          }
+
+          if (movedGuest) {
+            room.guests.push(movedGuest);
+            registrarAcao(`Alocou ${movedGuest.name} no ${room.name}`);
+            syncToFirebase();
+            renderAll();
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    window.toggleCheckIn = function(roomId, guestName) {
+      const room = rooms.find(r => r.id === roomId);
+      if (room) {
+        const guest = room.guests.find(g => g.name === guestName);
+        if (guest) {
+          salvarBackupEstado();
+          guest.checkedIn = !guest.checkedIn;
+          syncToFirebase();
+          renderRooms();
+          updateDashboardStats();
+        }
+      }
+    }
+
+    window.toggleRoomExtra = function(roomId, type) {
+      const room = rooms.find(r => r.id === roomId);
+      if (room) {
+        salvarBackupEstado();
+        if (type === 'colchao') {
+          room.extraColchao = !room.extraColchao;
+          room.maxCap = room.baseCap + (room.extraColchao ? 1 : 0) + (room.criancaGratis ? 1 : 0);
+        } else if (type === 'crianca') {
+          room.criancaGratis = !room.criancaGratis;
+          room.maxCap = room.baseCap + (room.extraColchao ? 1 : 0) + (room.criancaGratis ? 1 : 0);
+        }
+        syncToFirebase();
+        renderAll();
+      }
+    }
+
+    window.removerConvidadoQuarto = function(roomId, guestName) {
+      salvarBackupEstado();
+      const room = rooms.find(r => r.id === roomId);
+      if (room) {
+        const idx = room.guests.findIndex(g => g.name === guestName);
+        if (idx !== -1) {
+          room.guests.splice(idx, 1);
+          registrarAcao(`Removeu ${guestName} do ${room.name}`);
+          syncToFirebase();
+          renderAll();
+        }
+      }
+    }
+
+    window.printSingleRoom = function(roomId) {
+      document.body.classList.add("print-single-room");
+      const cards = document.querySelectorAll("#rooms-grid > div");
+      cards.forEach(c => c.classList.remove("print-target"));
+      
+      const targetCard = Array.from(cards).find(c => {
+        const dropzone = c.querySelector(".room-dropzone");
+        return dropzone && parseInt(dropzone.dataset.roomId) === roomId;
+      });
+
+      if (targetCard) {
+        targetCard.classList.add("print-target");
+        window.print();
+        setTimeout(() => {
+          document.body.classList.remove("print-single-room");
+          targetCard.classList.remove("print-target");
+        }, 500);
+      }
+    }
+
+    window.printAllRoomsIndividual = function() {
+      document.body.classList.add("print-all-mode");
+      window.print();
+      setTimeout(() => {
+        document.body.classList.remove("print-all-mode");
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
